@@ -1,9 +1,13 @@
 # crowdcontrol.online 
-### 🎶 💃🔊🕺🎶 
-A Hyper-Local Radio Experience 
+A Hyper-Local Radio Experience
 
 - [x] Ideate
-- [ ] Synthesize
+- [x] Map
+- [x] Reduce
+- [x] Build
+- [ ] Integrate
+- [ ] Test
 - [ ] Deploy
 
+# 🎶💃🔊🕺🎶
 > Universal Modality (coming soon...)
