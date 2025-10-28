@@ -1,2 +1,0 @@
-# crowdcontrol.online
-Website
