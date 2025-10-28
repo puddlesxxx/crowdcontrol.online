@@ -1,0 +1,8 @@
+title: crowdcontrol.online
+description: The Hyper-Local Radio Experience
+baseurl: "/" # the subpath of your site, e.g. /blog
+url: "https://puddlesxxx.github.io/crowdcontrol.online/" # the base hostname & protocol for your site, e.g. http://example.com
+theme: jekyll-theme-minimal
+author: puddles
+email: puddlesxxx@gmail.com
+github_username: puddlesxxx
