@@ -1,0 +1,612 @@
+<title>CrowdControl Privacy Policy</title>
+<meta name="description" content="What CrowdControl collects, how it's used, and how your data is protected.">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+/* ── Tokens ──────────────────────────────────────────────────────── */
+:root {
+  --bg:         #111116;
+  --surface:    #1c1c24;
+  --surface-hi: #24242e;
+  --border:     #30303e;
+  --text:       #e6e6f0;
+  --text-muted: #7676a0;
+
+  --cyan:    #1cfff7;
+  --magenta: #ff42e0;
+  --lime:    #93e200;
+  --amber:   #f5a623;
+
+  --accent-glow: rgba(28,255,247,0.08);
+  --accent-line: rgba(28,255,247,0.20);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:         #f2f2f8;
+    --surface:    #ffffff;
+    --surface-hi: #ebebf5;
+    --border:     #d8d8ea;
+    --text:       #111116;
+    --text-muted: #58587a;
+    --cyan:    #007f7c;
+    --magenta: #a6009a;
+    --lime:    #568600;
+    --amber:   #a07000;
+    --accent-glow: rgba(0,127,124,0.06);
+    --accent-line: rgba(0,127,124,0.18);
+  }
+}
+
+:root[data-theme="light"] {
+  --bg:         #f2f2f8;
+  --surface:    #ffffff;
+  --surface-hi: #ebebf5;
+  --border:     #d8d8ea;
+  --text:       #111116;
+  --text-muted: #58587a;
+  --cyan:    #007f7c;
+  --magenta: #a6009a;
+  --lime:    #568600;
+  --amber:   #a07000;
+  --accent-glow: rgba(0,127,124,0.06);
+  --accent-line: rgba(0,127,124,0.18);
+}
+
+:root[data-theme="dark"] {
+  --bg:         #111116;
+  --surface:    #1c1c24;
+  --surface-hi: #24242e;
+  --border:     #30303e;
+  --text:       #e6e6f0;
+  --text-muted: #7676a0;
+  --cyan:    #1cfff7;
+  --magenta: #ff42e0;
+  --lime:    #93e200;
+  --amber:   #f5a623;
+  --accent-glow: rgba(28,255,247,0.08);
+  --accent-line: rgba(28,255,247,0.20);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ── Shell ───────────────────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 2.25rem 1rem 2.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sidebar-brand { display: flex; flex-direction: column; gap: 0.2rem; }
+.sidebar-brand .app-name { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); }
+.sidebar-brand .doc-label { font-size: 0.67rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+
+.nav-group { display: flex; flex-direction: column; gap: 0.125rem; }
+.nav-group-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 0 0.6rem; margin-bottom: 0.3rem; }
+.nav-group a { display: block; padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: color 0.12s, background 0.12s; }
+.nav-group a:hover { color: var(--text); background: var(--surface); }
+.nav-group a.active { color: var(--cyan); background: var(--accent-glow); }
+
+.sidebar-meta { margin-top: auto; font-size: 0.68rem; color: var(--text-muted); padding: 0 0.6rem; line-height: 1.5; }
+.sidebar-meta a { color: var(--cyan); text-decoration: none; }
+.sidebar-meta a:hover { text-decoration: underline; }
+
+/* ── Main content ────────────────────────────────────────────────── */
+.content { padding: 2.75rem 3rem 6rem 3rem; min-width: 0; }
+
+/* ── Hero ────────────────────────────────────────────────────────── */
+.hero { max-width: 640px; margin-bottom: 4rem; padding-top: 0.5rem; }
+.hero-flag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cyan); margin-bottom: 1.1rem;
+}
+.hero-flag::before { content: ''; display: block; width: 20px; height: 2px; background: var(--cyan); border-radius: 1px; }
+.hero h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -0.03em;
+  line-height: 1.1; text-wrap: balance; color: var(--text); margin-bottom: 0.8rem;
+}
+.hero-date { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem; }
+.hero .intro { font-size: 0.92rem; color: var(--text-muted); max-width: 54ch; line-height: 1.6; }
+
+/* ── Sections ────────────────────────────────────────────────────── */
+.section {
+  max-width: 640px;
+  margin-bottom: 4rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 0.35rem;
+}
+
+.section > h2 {
+  font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2;
+  text-wrap: balance; color: var(--text); margin-bottom: 0.875rem;
+}
+
+.section p {
+  font-size: 0.88rem; color: var(--text-muted); max-width: 60ch;
+  margin-bottom: 0.75rem; line-height: 1.65;
+}
+
+.section p:last-child { margin-bottom: 0; }
+
+.section p strong { color: var(--text); font-weight: 600; }
+
+/* ── Sub-heading ─────────────────────────────────────────────────── */
+h3.sub {
+  font-size: 0.9rem; font-weight: 700; color: var(--text);
+  margin-top: 1.75rem; margin-bottom: 0.5rem;
+}
+
+/* ── Data table ──────────────────────────────────────────────────── */
+.data-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.data-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1rem;
+  padding: 0.8rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.data-row:last-child { border-bottom: none; }
+
+.d-key {
+  font-size: 0.79rem; font-weight: 700; color: var(--text); line-height: 1.4;
+  padding-top: 0.05em;
+}
+
+.d-val {
+  font-size: 0.79rem; color: var(--text-muted); line-height: 1.55;
+}
+
+/* ── Callout ─────────────────────────────────────────────────────── */
+.callout {
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-line);
+  border-radius: 9px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 1.25rem 0;
+}
+
+.callout strong { color: var(--cyan); }
+
+.callout-warn {
+  background: rgba(245,166,35,0.07);
+  border-color: rgba(245,166,35,0.28);
+}
+
+.callout-warn strong { color: var(--amber); }
+
+/* ── Divider ─────────────────────────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 3.5rem 0; max-width: 640px; }
+
+/* ── Security chips ──────────────────────────────────────────────── */
+.chips {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0;
+}
+
+.chip {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.02em;
+  padding: 0.22rem 0.55rem; border-radius: 100px;
+  background: var(--surface-hi); border: 1px solid var(--border); color: var(--text-muted);
+}
+
+.chip-ok {
+  background: rgba(147,226,0,0.10);
+  border-color: rgba(147,226,0,0.30);
+  color: var(--lime);
+}
+
+/* ── Focus ───────────────────────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 3px; }
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static; height: auto; border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row; flex-wrap: wrap; align-items: center;
+    padding: 1rem 1.25rem; gap: 0.75rem;
+  }
+  .nav-group-label { display: none; }
+  .nav-group { flex-direction: row; flex-wrap: wrap; gap: 0.2rem; }
+  .sidebar-meta { display: none; }
+  .content { padding: 1.75rem 1.25rem 4rem; }
+  .data-row { grid-template-columns: 1fr; gap: 0.2rem; }
+  .d-key { color: var(--cyan); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+
+<div class="shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" aria-label="Privacy policy navigation">
+    <div class="sidebar-brand">
+      <span class="app-name">CrowdControl</span>
+      <span class="doc-label">Privacy Policy</span>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Data</p>
+      <a href="#what-we-collect">What we collect</a>
+      <a href="#location">Location data</a>
+      <a href="#spotify">Spotify data</a>
+      <a href="#third-parties">Third parties</a>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Storage &amp; Security</p>
+      <a href="#storage">Where it lives</a>
+      <a href="#security">Security measures</a>
+      <a href="#retention">Retention</a>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Your rights</p>
+      <a href="#rights">Your rights</a>
+      <a href="#contact">Contact</a>
+    </div>
+
+    <div class="sidebar-meta">
+      Effective date: August 2026<br>
+      <a href="index.html">← crowdcontrol.online</a>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="content">
+
+    <div class="hero">
+      <div class="hero-flag">Privacy Policy</div>
+      <h1>Plain-language privacy.<br>No surprises.</h1>
+      <p class="hero-date">Effective: August 2026 · CrowdControl</p>
+      <p class="intro">
+        CrowdControl is a radio app. We need to know roughly where you are and what
+        music you have. This document explains exactly what we collect, why, how
+        it's stored, and what you can do about it. We've written it in plain English
+        on purpose.
+      </p>
+    </div>
+
+    <!-- What we collect -->
+    <section class="section" id="what-we-collect">
+      <p class="eyebrow">Overview</p>
+      <h2>What we collect</h2>
+
+      <div class="data-block">
+        <div class="data-row">
+          <span class="d-key">Location</span>
+          <span class="d-val">An H3 hexagonal cell index at resolution 7 (~1 km² area). Never precise GPS coordinates.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Spotify account</span>
+          <span class="d-val">Your Spotify user ID, display name, and the tracks in playlists you choose to activate. No payment data, no private messages.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Play history</span>
+          <span class="d-val">Tracks played per station, stored for 7 days. Used to power the History tab and prevent repeats within 6 hours.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Reactions</span>
+          <span class="d-val">Like, dislike, and skip-request counts per track per station. No individual attribution beyond the station level.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Subscription status</span>
+          <span class="d-val">Whether your account has an active Premium subscription, via RevenueCat. No payment card details are ever stored by CrowdControl.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Session token</span>
+          <span class="d-val">A signed JSON Web Token (JWT) issued by our server and stored locally on your device. Used to authenticate API requests.</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>What we never collect:</strong> Precise GPS coordinates, contacts, photos, microphone or camera access, browsing history outside the app, or any data from third-party advertising networks.
+      </div>
+    </section>
+
+    <!-- Location -->
+    <section class="section" id="location">
+      <p class="eyebrow">Location</p>
+      <h2>How location works</h2>
+
+      <p>Your device computes an <strong>H3 hexagonal cell index</strong> (resolution 7, roughly 1 km²) from your GPS coordinates before anything leaves your device. Only the cell ID is sent to our server — never the raw latitude/longitude.</p>
+
+      <p>We use that cell to look up your city, state, and country via a geocoding reverse-lookup cached in Cloudflare KV. The cell is stored in our database linked to your user ID. The city, state, and country names that result from the lookup are also stored so we can show you the correct station labels.</p>
+
+      <h3 class="sub">Background location</h3>
+      <p>If you grant background location permission, CrowdControl can update your station when you move to a new area while the app is minimised. This is entirely optional — you can revoke background permission in your device settings at any time. We never record a continuous GPS trail; only cell transitions matter to us.</p>
+
+      <h3 class="sub">Manual location (TV &amp; visionOS)</h3>
+      <p>On Apple TV, Android TV, and visionOS, there is no GPS hardware. You choose your city from a list or type a search term. That city is stored as your location with no coordinates attached.</p>
+
+      <div class="callout callout-warn">
+        <strong>Geofences</strong> (for private station radius checks) are computed entirely on-device using iOS/Android system APIs. The geofence boundaries are downloaded from our server — your precise position relative to them never leaves your device.
+      </div>
+    </section>
+
+    <!-- Spotify -->
+    <section class="section" id="spotify">
+      <p class="eyebrow">Spotify</p>
+      <h2>Spotify data</h2>
+
+      <p>CrowdControl uses the <strong>Spotify OAuth 2.0 PKCE</strong> flow. You authorise CrowdControl directly with Spotify; we receive a short-lived access token (60-minute expiry) and a refresh token. We never see your Spotify password.</p>
+
+      <p>The scopes we request are limited to what we need:</p>
+
+      <div class="data-block">
+        <div class="data-row">
+          <span class="d-key"><code>streaming</code></span>
+          <span class="d-val">Play audio via the Spotify SDK on your device.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key"><code>user-read-playback-state</code></span>
+          <span class="d-val">Know the current playback position so we can sync listeners to the right offset.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key"><code>user-modify-playback-state</code></span>
+          <span class="d-val">Add tracks to your queue and control playback for tune-in and track advancement.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key"><code>playlist-read-private</code></span>
+          <span class="d-val">Read your private playlists so you can choose which to activate for the radio pool.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key"><code>user-library-read</code></span>
+          <span class="d-val">Mirror your Spotify Liked Songs into the Liked Songs playlist in the app (read-only).</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key"><code>user-read-private</code><br><code>user-read-email</code></span>
+          <span class="d-val">Read your Spotify display name and user ID to create your CrowdControl account. Your email is used for account identification only — it is not shared or used for marketing.</span>
+        </div>
+      </div>
+
+      <p>Track metadata (title, artist, album art, duration) from your playlists is stored in our Cloudflare D1 database and used to populate the radio pool. We do not sell, license, or share this data. Audio feature enrichment (BPM, key, energy) is fetched from the ReccoBeats API.</p>
+    </section>
+
+    <!-- Third parties -->
+    <section class="section" id="third-parties">
+      <p class="eyebrow">Third parties</p>
+      <h2>Who else is involved</h2>
+
+      <div class="data-block">
+        <div class="data-row">
+          <span class="d-key">Spotify AB</span>
+          <span class="d-val">OAuth authentication and music playback. Governed by <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" rel="noopener">Spotify's Privacy Policy</a>.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Cloudflare, Inc.</span>
+          <span class="d-val">Our backend runs entirely on Cloudflare Workers, D1 (SQLite), and KV. Data is processed at Cloudflare edge locations. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Cloudflare's Privacy Policy</a>.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">RevenueCat</span>
+          <span class="d-val">Subscription management and purchase verification. RevenueCat receives anonymised purchase receipts from Apple/Google. See <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener">RevenueCat's Privacy Policy</a>.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">ReccoBeats</span>
+          <span class="d-val">Audio feature enrichment (BPM, key, energy, danceability). Track Spotify IDs are sent to their API; no user identifiers are included.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Nominatim (OpenStreetMap)</span>
+          <span class="d-val">Reverse-geocoding H3 cell centroids to city/state/country names on web and TV platforms. Only the H3 centroid coordinates are sent, not your precise location. Results are cached for 90 days in Cloudflare KV.</span>
+        </div>
+      </div>
+
+      <p>We do not use analytics SDKs, advertising networks, or any third-party tracking pixels. Crash reporting, if added, will be disclosed here first.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Storage -->
+    <section class="section" id="storage">
+      <p class="eyebrow">Infrastructure</p>
+      <h2>Where your data lives</h2>
+
+      <div class="data-block">
+        <div class="data-row">
+          <span class="d-key">Cloudflare D1</span>
+          <span class="d-val">Primary database: user accounts, playlist tracks, play history, private station settings, credits, follower graph. SQLite. Stored in Cloudflare's global network.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Cloudflare KV</span>
+          <span class="d-val">Short-lived cache: now-playing seeds, listener presence counts, skip vote tallies, fast pass queues, geocoding results. Keys expire automatically.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Cloudflare Durable Objects</span>
+          <span class="d-val">Per-station in-memory WebSocket hubs. Listener presence is buffered in memory and flushed periodically — no persistent personal data stored here.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Device (SecureStore / localStorage)</span>
+          <span class="d-val">Your JWT, Spotify access/refresh tokens, and most-recently-known location are stored locally on your device in the OS secure store. They never leave your device except as Bearer tokens on API requests over HTTPS.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security -->
+    <section class="section" id="security">
+      <p class="eyebrow">Defensive design</p>
+      <h2>Security measures</h2>
+
+      <p>We treat security as a design constraint, not an afterthought. Below are the specific measures in place:</p>
+
+      <h3 class="sub">Authentication &amp; tokens</h3>
+      <div class="chips">
+        <span class="chip chip-ok">PKCE OAuth — no secret in the client</span>
+        <span class="chip chip-ok">HS256 JWT, 7-day TTL</span>
+        <span class="chip chip-ok">Refresh flow with short-lived Spotify AT (60 min)</span>
+        <span class="chip chip-ok">JWT stored in SecureStore / localStorage — not cookies</span>
+      </div>
+
+      <h3 class="sub">Transport</h3>
+      <div class="chips">
+        <span class="chip chip-ok">All traffic over HTTPS / WSS</span>
+        <span class="chip chip-ok">TLS enforced at Cloudflare edge</span>
+        <span class="chip chip-ok">HSTS headers</span>
+      </div>
+
+      <h3 class="sub">Location privacy</h3>
+      <div class="chips">
+        <span class="chip chip-ok">Coordinates quantised to H3 res-7 on device</span>
+        <span class="chip chip-ok">Raw GPS never transmitted</span>
+        <span class="chip chip-ok">No continuous location trail stored</span>
+      </div>
+
+      <h3 class="sub">API design</h3>
+      <div class="chips">
+        <span class="chip chip-ok">All mutation endpoints require a valid JWT</span>
+        <span class="chip chip-ok">Skip votes deduplicated server-side per userId</span>
+        <span class="chip chip-ok">Fast pass limited to one entry per user</span>
+        <span class="chip chip-ok">Private station access gated by ownership check</span>
+        <span class="chip chip-ok">Demo auth endpoint absent in production</span>
+      </div>
+
+      <h3 class="sub">Data minimisation</h3>
+      <p>We store only what the app needs to function. Playlist tracks contain no listening history beyond which station they played in. Individual reaction data (like/dislike) is aggregated per track; it is not exposed to other listeners in its raw form.</p>
+
+      <div class="callout">
+        <strong>No ads, no profiles, no tracking.</strong> We have no advertising relationships and run no behaviour-profiling analytics. Your Spotify usage outside of CrowdControl is never visible to us.
+      </div>
+    </section>
+
+    <!-- Retention -->
+    <section class="section" id="retention">
+      <p class="eyebrow">Data lifecycle</p>
+      <h2>How long we keep things</h2>
+
+      <div class="data-block">
+        <div class="data-row">
+          <span class="d-key">Play history</span>
+          <span class="d-val">7 days. Rows are automatically expired by a <code>expires_at</code> column checked on every query.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Skip votes</span>
+          <span class="d-val">5 minutes. Stored in Cloudflare KV with a TTL keyed to the track.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Fast pass queue entries</span>
+          <span class="d-val">Up to 1 hour, or until the track is played or manually removed.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Geocoding cache</span>
+          <span class="d-val">H3 cell → city lookups cached for 90 days.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Playlist tracks</span>
+          <span class="d-val">Retained for as long as the playlist remains active in your account. Deleting or deactivating a playlist removes its tracks from the pool.</span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">User account</span>
+          <span class="d-val">Retained until you request deletion. We do not automatically delete accounts for inactivity.</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Rights -->
+    <section class="section" id="rights">
+      <p class="eyebrow">Your rights</p>
+      <h2>What you can do</h2>
+
+      <h3 class="sub">Delete your data</h3>
+      <p>You can clear all locally stored credentials and cached app data at any time using <strong>Profile → Privacy → Reset to Defaults</strong>. This removes your JWT, cached location, and settings from the device. To delete your account and all associated server-side data, contact us at the address below.</p>
+
+      <h3 class="sub">Revoke Spotify access</h3>
+      <p>You can disconnect your Spotify account from <strong>Profile → Disconnect Spotify</strong>. You can also revoke CrowdControl's access directly from your <a href="https://www.spotify.com/account/apps/" target="_blank" rel="noopener">Spotify account settings</a> at any time. Revoking access stops playlist sync and playback control; it does not automatically delete your CrowdControl account or play history.</p>
+
+      <h3 class="sub">Disable background location</h3>
+      <p>Background location can be toggled off in <strong>Profile → Privacy → Background Location Updates</strong>, or by revoking the permission from your device's system settings (Settings → CrowdControl → Location → Never / While Using).</p>
+
+      <h3 class="sub">Data portability</h3>
+      <p>On request, we can provide a JSON export of your account data: user record, active playlists and tracks, and play history within the retention window. Contact us to request this.</p>
+
+      <h3 class="sub">GDPR &amp; CCPA</h3>
+      <p>If you are located in the EU/EEA or California, you have additional rights including the right to access, correct, port, and erase your data. Our legal basis for processing is <strong>contractual necessity</strong> (running the service you signed up for) and, for location data, your explicit consent via the system permission dialog. You may withdraw consent at any time without affecting the lawfulness of processing before withdrawal.</p>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <p class="eyebrow">Questions</p>
+      <h2>Contact</h2>
+      <p>Privacy questions, data deletion requests, and any other concerns can be sent to:</p>
+      <div class="data-block" style="margin-top:0.75rem">
+        <div class="data-row">
+          <span class="d-key">Email</span>
+          <span class="d-val"><a href="mailto:privacy@crowdcontrol.online">privacy@crowdcontrol.online</a></span>
+        </div>
+        <div class="data-row">
+          <span class="d-key">Response time</span>
+          <span class="d-val">We aim to respond within 72 hours for routine inquiries, and within 30 days for formal data access or deletion requests (as required by GDPR).</span>
+        </div>
+      </div>
+      <p style="margin-top:1rem">We will update this policy when our data practices change. The effective date at the top of the page reflects the most recent revision. Material changes will be communicated via an in-app notice.</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  const links = Array.from(document.querySelectorAll('.nav-group a'));
+  const ids = links.map((a) => a.getAttribute('href').replace('#', ''));
+  if (!('IntersectionObserver' in window)) { if (links.length) links[0].classList.add('active'); return; }
+  let current = ids[0];
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          current = entry.target.id;
+          links.forEach((a) => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+        }
+      });
+    },
+    { rootMargin: '-15% 0px -75% 0px' }
+  );
+  ids.forEach((id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+  if (links.length) links[0].classList.add('active');
+}());
+</script>

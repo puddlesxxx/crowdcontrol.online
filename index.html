@@ -1,0 +1,1018 @@
+<title>CrowdControl</title>
+<meta name="description" content="Location-based collaborative radio. Your crowd picks the music.">
+<meta property="og:title" content="CrowdControl — Crowd Radio">
+<meta property="og:description" content="The station playing right now is built from the Spotify libraries of everyone around you. No algorithm. No curator. Just the taste of your local crowd.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+/* ── Tokens: light palette on :root (dark-first swap via media) ──── */
+:root {
+  --bg:         #07070d;
+  --bg2:        #111120;
+  --bg3:        #191930;
+  --border:     #1e1e38;
+  --text:       #eeeef8;
+  --text2:      #9898c0;
+  --text3:      #5555880;
+
+  --cyan:       #1cfff7;
+  --magenta:    #ff42e0;
+  --lime:       #93e200;
+  --amber:      #f5a623;
+
+  --cyan-dim:   rgba(28,255,247,0.10);
+  --cyan-line:  rgba(28,255,247,0.22);
+  --mag-dim:    rgba(255,66,224,0.10);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:       #f3f3fb;
+    --bg2:      #ffffff;
+    --bg3:      #e8e8f4;
+    --border:   #d0d0e8;
+    --text:     #0c0c24;
+    --text2:    #4a4a78;
+
+    --cyan:     #00706d;
+    --magenta:  #9a0092;
+    --lime:     #527800;
+    --amber:    #9a6500;
+
+    --cyan-dim:  rgba(0,112,109,0.08);
+    --cyan-line: rgba(0,112,109,0.20);
+    --mag-dim:   rgba(154,0,146,0.08);
+  }
+}
+
+:root[data-theme="light"] {
+  --bg:       #f3f3fb;
+  --bg2:      #ffffff;
+  --bg3:      #e8e8f4;
+  --border:   #d0d0e8;
+  --text:     #0c0c24;
+  --text2:    #4a4a78;
+
+  --cyan:     #00706d;
+  --magenta:  #9a0092;
+  --lime:     #527800;
+  --amber:    #9a6500;
+
+  --cyan-dim:  rgba(0,112,109,0.08);
+  --cyan-line: rgba(0,112,109,0.20);
+  --mag-dim:   rgba(154,0,146,0.08);
+}
+
+:root[data-theme="dark"] {
+  --bg:         #07070d;
+  --bg2:        #111120;
+  --bg3:        #191930;
+  --border:     #1e1e38;
+  --text:       #eeeef8;
+  --text2:      #9898c0;
+
+  --cyan:       #1cfff7;
+  --magenta:    #ff42e0;
+  --lime:       #93e200;
+  --amber:      #f5a623;
+
+  --cyan-dim:   rgba(28,255,247,0.10);
+  --cyan-line:  rgba(28,255,247,0.22);
+  --mag-dim:    rgba(255,66,224,0.10);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 3px; }
+
+/* ── Signal canvas background ────────────────────────────────────── */
+#signal-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.18;
+}
+
+/* ── Nav ─────────────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  /* soften the background so the canvas shows faintly through */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-logo {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.nav-logo span { color: var(--cyan); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text2);
+  letter-spacing: 0.01em;
+  transition: color 0.12s;
+}
+
+.nav-links a:hover { color: var(--text); text-decoration: none; }
+
+.nav-cta {
+  background: var(--cyan);
+  color: var(--bg) !important;
+  font-weight: 700 !important;
+  padding: 0.4rem 1rem;
+  border-radius: 100px;
+  transition: opacity 0.12s !important;
+}
+
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── Hero ────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 clamp(1.5rem, 6vw, 7rem);
+  padding-top: 60px;
+}
+
+.hero-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  background: var(--cyan);
+  display: block;
+  border-radius: 1px;
+}
+
+.hero-h1 {
+  font-size: clamp(3.5rem, 11vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.93;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  max-width: 14ch;
+}
+
+.hero-h1 .accent { color: var(--cyan); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  color: var(--text2);
+  max-width: 44ch;
+  line-height: 1.55;
+  margin-bottom: 2.75rem;
+}
+
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--cyan);
+  color: var(--bg);
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 0.7rem 1.6rem;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.12s, transform 0.12s;
+}
+
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); text-decoration: none; color: var(--bg); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, transform 0.12s;
+}
+
+.btn-secondary:hover { border-color: var(--text2); color: var(--text); transform: translateY(-1px); text-decoration: none; }
+
+/* ── Signal bar ──────────────────────────────────────────────────── */
+.hero-signal {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to top, var(--bg), transparent);
+  pointer-events: none;
+}
+
+/* ── Now-playing card (decorative) ──────────────────────────────── */
+.np-card {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 6rem);
+  bottom: clamp(4rem, 12vh, 9rem);
+  width: 280px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 2;
+}
+
+.np-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.np-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.np-track {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.np-art {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--magenta), var(--cyan));
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.np-info {}
+.np-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.np-artist {
+  font-size: 0.76rem;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+.np-progress {
+  height: 3px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.np-fill {
+  height: 100%;
+  background: var(--cyan);
+  border-radius: 100px;
+  width: 38%;
+  animation: progress-drift 24s linear infinite;
+}
+
+@keyframes progress-drift {
+  from { width: 5%; }
+  to   { width: 95%; }
+}
+
+.np-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--text2);
+}
+
+.np-listeners {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  color: var(--text2);
+}
+
+/* ── Content sections wrapper ────────────────────────────────────── */
+.sections {
+  position: relative;
+  z-index: 1;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+}
+
+/* ── How it works ────────────────────────────────────────────────── */
+.how {
+  padding: 7rem 0 5rem;
+  border-top: 1px solid var(--border);
+}
+
+.section-eyebrow {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 0.6rem;
+}
+
+.section-h2 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  max-width: 18ch;
+}
+
+.section-h2 em { font-style: normal; color: var(--cyan); }
+
+.how-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+  margin-top: 3rem;
+}
+
+.how-prose {
+  font-size: 0.95rem;
+  color: var(--text2);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.how-prose strong { color: var(--text); font-weight: 600; }
+
+/* ── Hierarchy list ──────────────────────────────────────────────── */
+.hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.level-row {
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.12s;
+}
+
+.level-row:hover { border-color: var(--lc); }
+
+.level-pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lc);
+  box-shadow: 0 0 8px var(--lc);
+  flex-shrink: 0;
+}
+
+.level-text {}
+.level-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.level-desc {
+  font-size: 0.76rem;
+  color: var(--text2);
+  margin-top: 1px;
+}
+
+/* ── Features ────────────────────────────────────────────────────── */
+.features {
+  padding: 5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.fcard {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.fcard:hover {
+  border-color: var(--fc);
+  transform: translateY(-2px);
+}
+
+.fcard-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--fc-dim);
+  border: 1px solid var(--fc-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.fcard-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.fcard-body {
+  font-size: 0.84rem;
+  color: var(--text2);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.badge-premium {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  opacity: 0.85;
+}
+
+/* ── Premium ─────────────────────────────────────────────────────── */
+.premium {
+  padding: 5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.premium-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.premium-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.premium-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.premium-list li::before {
+  content: '→';
+  color: var(--magenta);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.05em;
+}
+
+.premium-callout {
+  background: var(--mag-dim);
+  border: 1px solid var(--magenta);
+  border-radius: 14px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.premium-callout-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--magenta);
+}
+
+.premium-callout-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.premium-callout-body {
+  font-size: 0.84rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* ── Download / CTA ──────────────────────────────────────────────── */
+.download {
+  padding: 7rem 0 6rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.download h2 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.97;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.download h2 em { font-style: normal; color: var(--cyan); }
+
+.download p {
+  font-size: 1rem;
+  color: var(--text2);
+  max-width: 42ch;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+}
+
+.download-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.875rem;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 2rem clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.footer-logo span { color: var(--cyan); }
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-size: 0.78rem;
+  color: var(--text2);
+  transition: color 0.1s;
+}
+
+.footer-links a:hover { color: var(--text); text-decoration: none; }
+
+.footer-copy {
+  font-size: 0.72rem;
+  color: var(--text2);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .how-body { grid-template-columns: 1fr; gap: 2.5rem; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .premium-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .np-card { display: none; }
+}
+
+@media (max-width: 560px) {
+  .features-grid { grid-template-columns: 1fr; }
+  nav .nav-links { display: none; }
+}
+
+/* ── Motion preferences ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .np-fill { animation: none; width: 40%; }
+  .np-badge-dot { animation: none; }
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+
+<!-- FM signal canvas — subtle, always behind content -->
+<canvas id="signal-canvas" aria-hidden="true"></canvas>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="/"><span>Crowd</span>Control</a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#private-stations">For DJs</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="#download" class="nav-cta">Get the app</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Location-based collaborative radio</div>
+  <h1 class="hero-h1">
+    Your crowd's<br>
+    <span class="accent">radio.</span>
+  </h1>
+  <p class="hero-sub">
+    The music playing right now comes from the Spotify libraries of everyone around you.
+    No algorithm. No curator. Just the actual taste of your local crowd.
+  </p>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="#download">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 10l5 4 5-4M8 2v12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Download free
+    </a>
+    <a class="btn-secondary" href="guide.html">Read the guide →</a>
+  </div>
+
+  <!-- Decorative now-playing card -->
+  <div class="np-card" aria-hidden="true">
+    <div class="np-badge">
+      <div class="np-badge-dot"></div>
+      Now playing · San Francisco
+    </div>
+    <div class="np-track">
+      <div class="np-art"></div>
+      <div class="np-info">
+        <div class="np-title">Golden Hour</div>
+        <div class="np-artist">from Jay's playlist</div>
+      </div>
+    </div>
+    <div class="np-progress">
+      <div class="np-fill"></div>
+    </div>
+    <div class="np-meta">
+      <span>1:12</span>
+      <span>3:24</span>
+    </div>
+    <div class="np-listeners">
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <circle cx="8" cy="5" r="3"/>
+        <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+      </svg>
+      214 listening
+    </div>
+  </div>
+
+  <div class="hero-signal" aria-hidden="true"></div>
+</section>
+
+<!-- How it works -->
+<div class="sections">
+  <section class="how" id="how-it-works">
+    <p class="section-eyebrow">The model</p>
+    <h2 class="section-h2">Made by<br><em>whoever's there</em></h2>
+
+    <div class="how-body">
+      <div class="how-prose">
+        <p>Open CrowdControl and your GPS puts you in up to five community stations — your neighbourhood, city, state, country, and the whole world. You're in all of them simultaneously.</p>
+        <p>When the station needs a new track, the server picks a <strong>random listener</strong>, then a <strong>random song</strong> from their active Spotify playlists. No stored queue. No trained taste graph. The pool is whoever's tuned in right now.</p>
+        <p>Add your playlists, tune in, and your music immediately enters the mix for everyone at your level. You contribute; the crowd contributes back.</p>
+      </div>
+
+      <div class="hierarchy">
+        <div class="level-row" style="--lc:#1cfff7">
+          <div class="level-pip"></div>
+          <div class="level-text">
+            <div class="level-name">World</div>
+            <div class="level-desc">Every CrowdControl listener on Earth</div>
+          </div>
+        </div>
+        <div class="level-row" style="--lc:#ff42e0">
+          <div class="level-pip"></div>
+          <div class="level-text">
+            <div class="level-name">Country</div>
+            <div class="level-desc">Everyone in your country</div>
+          </div>
+        </div>
+        <div class="level-row" style="--lc:#93e200">
+          <div class="level-pip"></div>
+          <div class="level-text">
+            <div class="level-name">State / Region</div>
+            <div class="level-desc">Your state or regional area</div>
+          </div>
+        </div>
+        <div class="level-row" style="--lc:#f5a623">
+          <div class="level-pip"></div>
+          <div class="level-text">
+            <div class="level-name">City</div>
+            <div class="level-desc">Your metro area</div>
+          </div>
+        </div>
+        <div class="level-row" style="--lc:#b87aff">
+          <div class="level-pip"></div>
+          <div class="level-text">
+            <div class="level-name">ZIP Code</div>
+            <div class="level-desc">Your immediate neighbourhood</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <p class="section-eyebrow">What you can do</p>
+    <h2 class="section-h2"><em>Listen.</em><br>React. Shape it.</h2>
+
+    <div class="features-grid">
+      <div class="fcard" style="--fc:#1cfff7;--fc-dim:rgba(28,255,247,0.08);--fc-line:rgba(28,255,247,0.18)">
+        <div class="fcard-icon">🎵</div>
+        <div class="fcard-title">Crowd-sourced pool</div>
+        <p class="fcard-body">The track pool is the live Spotify libraries of whoever is tuned in. Your taste changes the station the moment you join.</p>
+      </div>
+      <div class="fcard" style="--fc:#ff42e0;--fc-dim:rgba(255,66,224,0.08);--fc-line:rgba(255,66,224,0.18)">
+        <div class="fcard-icon">⏱</div>
+        <div class="fcard-title">Real-time sync</div>
+        <p class="fcard-body">Tune in and Spotify starts at the exact position everyone else is at. Mid-song, in sync, from the first second.</p>
+      </div>
+      <div class="fcard" style="--fc:#93e200;--fc-dim:rgba(147,226,0,0.08);--fc-line:rgba(147,226,0,0.18)">
+        <div class="fcard-icon">⏭</div>
+        <div class="fcard-title">Skip voting</div>
+        <p class="fcard-body">When enough listeners request a skip, the station advances. Collective control — no single veto, no autoplay tyranny.</p>
+      </div>
+      <div class="fcard" style="--fc:#f5a623;--fc-dim:rgba(245,166,35,0.08);--fc-line:rgba(245,166,35,0.18)">
+        <div class="fcard-icon">⚡</div>
+        <div class="fcard-title">Fast Pass <span class="badge-premium">Premium</span></div>
+        <p class="fcard-body">Queue a specific track from the station's pool to play next. One slot per listener, played before the random algorithm runs.</p>
+      </div>
+      <div class="fcard" style="--fc:#b87aff;--fc-dim:rgba(184,122,255,0.08);--fc-line:rgba(184,122,255,0.18)">
+        <div class="fcard-icon">♥</div>
+        <div class="fcard-title">App Favorites</div>
+        <p class="fcard-body">Heart a track to save it to your App Favorites playlist — separate from Spotify Liked Songs and fully editable.</p>
+      </div>
+      <div class="fcard" style="--fc:#1cfff7;--fc-dim:rgba(28,255,247,0.08);--fc-line:rgba(28,255,247,0.18)">
+        <div class="fcard-icon">📡</div>
+        <div class="fcard-title">TV &amp; Apple Vision</div>
+        <p class="fcard-body">Runs on Apple TV, Android TV, and visionOS. Pick your city manually and enjoy the crowd from the couch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Private stations -->
+  <section class="premium" id="private-stations">
+    <div class="premium-inner">
+      <div>
+        <p class="section-eyebrow">For creators</p>
+        <h2 class="section-h2">Your<br><em>station.</em></h2>
+        <ul class="premium-list">
+          <li>Static venue or dynamic GPS — the station follows you</li>
+          <li>Sound filters: BPM range, genre whitelist, release year, explicit flag</li>
+          <li>Advanced query builder with and/or logic across any audio feature</li>
+          <li>DJ Mode — next track scored for harmonic continuity and drawn from the top quartile</li>
+          <li>Track pool weights — prioritise your own music or recent arrivals</li>
+          <li>Configurable skip threshold and Fast Pass toggle</li>
+          <li>Password-protect or go public within your broadcast radius</li>
+        </ul>
+      </div>
+      <div class="premium-callout">
+        <div class="premium-callout-label">Premium feature</div>
+        <div class="premium-callout-title">Create private stations</div>
+        <p class="premium-callout-body">
+          A private station lets you run a fully controlled radio session from any fixed or moving location.
+          Ideal for venues, DJ sets, street performances, and invite-only listening parties.
+        </p>
+        <a class="btn-primary" href="#download" style="background:var(--magenta);align-self:flex-start">
+          Start free →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section class="download" id="download">
+    <h2>The crowd is<br>already <em>listening.</em></h2>
+    <p>Free on iOS, Android, and the web. Premium unlocks private stations, Fast Pass, and multi-playlist control.</p>
+    <div class="download-ctas">
+      <a class="btn-primary" href="#">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M11.182 9.79c-.22.424-.44.815-.672 1.176-.35.535-.637.905-.859 1.11-.343.315-.71.476-1.105.485-.282 0-.623-.08-1.02-.243-.398-.162-.764-.243-1.101-.243-.352 0-.728.081-1.13.243-.403.163-.727.247-.974.253-.377.01-.752-.155-1.124-.494-.24-.222-.537-.606-.888-1.152C1.71 9.9 1.2 8.696 1.02 7.458c-.182-1.286.05-2.336.694-3.147.47-.595 1.05-.916 1.741-.923.28 0 .649.086 1.11.256.46.17.756.256.886.256.098 0 .428-.1.988-.3.53-.185.977-.262 1.343-.232.994.08 1.74.472 2.237 1.179-.888.539-1.328 1.293-1.32 2.26.007.754.282 1.382.822 1.883.245.232.518.412.822.54-.066.19-.135.372-.21.549zM9 1.082C9 1.72 8.76 2.316 8.28 2.87c-.577.671-1.274 1.058-2.031 1.001-.01-.078-.014-.16-.014-.245 0-.615.267-1.272.742-1.81.237-.27.539-.495.906-.675C8.248 1.961 8.605 1.853 9 1.846c.003.08.003.157 0 .236z"/>
+        </svg>
+        App Store
+      </a>
+      <a class="btn-primary" href="#" style="background:var(--lime);color:#0c0c24">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M1.578 1L8 8.5 1.578 16h1.16l5.868-6.73L13.99 16H16L9.238 8.5 16 1h-1.16l-5.447 6.24L4.055 1H1.578z"/>
+        </svg>
+        Google Play
+      </a>
+      <a class="btn-secondary" href="guide.html">Read the guide</a>
+    </div>
+  </section>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo"><span>Crowd</span>Control</div>
+  <ul class="footer-links">
+    <li><a href="guide.html">User Guide</a></li>
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#private-stations">For DJs</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 CrowdControl</span>
+</footer>
+
+<script>
+// FM signal waveform — canvas drawn each frame, low-amplitude, theme-aware
+(function () {
+  const canvas = document.getElementById('signal-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let raf;
+  let w, h;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  function isDark() {
+    const theme = document.documentElement.dataset.theme;
+    if (theme === 'dark') return true;
+    if (theme === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    const dark = isDark();
+    // Three overlapping sine layers at different frequencies and phases
+    const layers = [
+      { freq: 0.006, amp: h * 0.045, phase: 0,    speed: 0.012, color: dark ? '28,255,247' : '0,112,109',   alpha: 0.55 },
+      { freq: 0.009, amp: h * 0.028, phase: 2.1,  speed: 0.019, color: dark ? '255,66,224' : '154,0,146',   alpha: 0.35 },
+      { freq: 0.004, amp: h * 0.062, phase: 4.4,  speed: 0.007, color: dark ? '147,226,0'  : '82,120,0',    alpha: 0.25 },
+    ];
+
+    layers.forEach(({ freq, amp, phase, speed, color, alpha }) => {
+      ctx.beginPath();
+      const cy = h * 0.72;
+      for (let x = 0; x <= w; x += 2) {
+        const y = cy + Math.sin(x * freq + t * speed + phase) * amp;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = `rgba(${color},${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    t += 1;
+    raf = requestAnimationFrame(draw);
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // Draw a single static frame instead of animating
+    draw();
+    cancelAnimationFrame(raf);
+  } else {
+    draw();
+  }
+}());
+
+// Scroll-spy for nav links
+(function () {
+  const links = document.querySelectorAll('.nav-links a[href^="#"]');
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          links.forEach((a) => {
+            a.style.color = a.getAttribute('href') === '#' + e.target.id ? 'var(--text)' : '';
+          });
+        }
+      });
+    },
+    { rootMargin: '-30% 0px -60% 0px' }
+  );
+  ['how-it-works', 'features', 'private-stations', 'download'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+}());
+</script>

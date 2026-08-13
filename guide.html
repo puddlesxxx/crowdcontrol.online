@@ -1,0 +1,922 @@
+<title>CrowdControl Guide</title>
+<style>
+/* ── Token system ────────────────────────────────────────────────── */
+/* Dark-first: bare :root is the dark palette. Light overrides follow. */
+:root {
+  --bg:         #111116;
+  --surface:    #1c1c24;
+  --surface-hi: #24242e;
+  --border:     #30303e;
+  --text:       #e6e6f0;
+  --text-muted: #7676a0;
+
+  --cyan:    #1cfff7;
+  --magenta: #ff42e0;
+  --lime:    #93e200;
+  --amber:   #f5a623;
+  --violet:  #b87aff;
+  --orange:  #ff7040;
+
+  --c-world:   #1cfff7;
+  --c-country: #ff42e0;
+  --c-state:   #93e200;
+  --c-city:    #f5a623;
+  --c-zip:     #b87aff;
+  --c-private: #ff7040;
+
+  --accent-glow: rgba(28, 255, 247, 0.10);
+  --accent-line: rgba(28, 255, 247, 0.25);
+}
+
+/* System light mode */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:         #f2f2f8;
+    --surface:    #ffffff;
+    --surface-hi: #ebebf5;
+    --border:     #d8d8ea;
+    --text:       #111116;
+    --text-muted: #58587a;
+
+    --cyan:    #007f7c;
+    --magenta: #a6009a;
+    --lime:    #568600;
+    --amber:   #a07000;
+    --violet:  #7040c8;
+    --orange:  #c04420;
+
+    --c-world:   #007f7c;
+    --c-country: #a6009a;
+    --c-state:   #568600;
+    --c-city:    #a07000;
+    --c-zip:     #7040c8;
+    --c-private: #c04420;
+
+    --accent-glow: rgba(0, 127, 124, 0.08);
+    --accent-line: rgba(0, 127, 124, 0.22);
+  }
+}
+
+:root[data-theme="light"] {
+  --bg:         #f2f2f8;
+  --surface:    #ffffff;
+  --surface-hi: #ebebf5;
+  --border:     #d8d8ea;
+  --text:       #111116;
+  --text-muted: #58587a;
+
+  --cyan:    #007f7c;
+  --magenta: #a6009a;
+  --lime:    #568600;
+  --amber:   #a07000;
+  --violet:  #7040c8;
+  --orange:  #c04420;
+
+  --c-world:   #007f7c;
+  --c-country: #a6009a;
+  --c-state:   #568600;
+  --c-city:    #a07000;
+  --c-zip:     #7040c8;
+  --c-private: #c04420;
+
+  --accent-glow: rgba(0, 127, 124, 0.08);
+  --accent-line: rgba(0, 127, 124, 0.22);
+}
+
+:root[data-theme="dark"] {
+  --bg:         #111116;
+  --surface:    #1c1c24;
+  --surface-hi: #24242e;
+  --border:     #30303e;
+  --text:       #e6e6f0;
+  --text-muted: #7676a0;
+
+  --cyan:    #1cfff7;
+  --magenta: #ff42e0;
+  --lime:    #93e200;
+  --amber:   #f5a623;
+  --violet:  #b87aff;
+  --orange:  #ff7040;
+
+  --c-world:   #1cfff7;
+  --c-country: #ff42e0;
+  --c-state:   #93e200;
+  --c-city:    #f5a623;
+  --c-zip:     #b87aff;
+  --c-private: #ff7040;
+
+  --accent-glow: rgba(28, 255, 247, 0.10);
+  --accent-line: rgba(28, 255, 247, 0.25);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ── Shell layout ────────────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 2.25rem 1rem 2.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.sidebar-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sidebar-brand .app-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.sidebar-brand .doc-label {
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.nav-group-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.nav-group a {
+  display: block;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+
+.nav-group a:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.nav-group a.active {
+  color: var(--cyan);
+  background: var(--accent-glow);
+}
+
+.sidebar-updated {
+  margin-top: auto;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  padding: 0 0.6rem;
+  line-height: 1.4;
+}
+
+/* ── Main content ────────────────────────────────────────────────── */
+.content {
+  padding: 2.75rem 3rem 6rem 3rem;
+  min-width: 0;
+}
+
+/* ── Sections ────────────────────────────────────────────────────── */
+.section {
+  max-width: 640px;
+  margin-bottom: 4.5rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.eyebrow {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.section > h2 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.section > p,
+.section-body p {
+  font-size: 0.9rem;
+  color: var(--text);
+  max-width: 60ch;
+  margin-bottom: 0.85rem;
+}
+
+.section > p:last-child,
+.section-body p:last-child {
+  margin-bottom: 0;
+}
+
+h3.sub {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-top: 2rem;
+  margin-bottom: 0.65rem;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────── */
+.hero {
+  max-width: 640px;
+  margin-bottom: 4rem;
+  padding-top: 0.5rem;
+}
+
+.hero-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 1.1rem;
+}
+
+.hero-flag::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--cyan);
+  border-radius: 1px;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.hero h1 .accent {
+  color: var(--cyan);
+}
+
+.hero .sub {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  max-width: 52ch;
+  line-height: 1.6;
+}
+
+/* ── Station hierarchy ───────────────────────────────────────────── */
+.hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 1.25rem 0;
+}
+
+.level-row {
+  display: grid;
+  grid-template-columns: 10px 100px 1fr;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.7rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.15s;
+}
+
+.level-row:hover { border-color: var(--lc); }
+
+.level-pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lc);
+  box-shadow: 0 0 6px var(--lc);
+  flex-shrink: 0;
+}
+
+.level-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.level-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Reaction cards ──────────────────────────────────────────────── */
+.card-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.rcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1rem;
+}
+
+.rcard-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.rcard-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+.rcard-body {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Setting table ───────────────────────────────────────────────── */
+.setting-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.setting-row:last-child { border-bottom: none; }
+
+.s-key {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  padding-top: 0.05em;
+  line-height: 1.4;
+}
+
+.s-val {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── Chips ───────────────────────────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.4rem 0;
+}
+
+.chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.18rem 0.5rem;
+  border-radius: 100px;
+  background: var(--surface-hi);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+/* ── Callout ─────────────────────────────────────────────────────── */
+.callout {
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-line);
+  border-radius: 9px;
+  padding: 0.875rem 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 1.25rem 0;
+}
+
+.callout strong { color: var(--cyan); }
+
+/* ── Premium badge ───────────────────────────────────────────────── */
+.badge-premium {
+  display: inline-block;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  opacity: 0.85;
+}
+
+/* ── Quick start steps ───────────────────────────────────────────── */
+.steps {
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.875rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--border);
+  align-items: start;
+}
+
+.step:last-child { border-bottom: none; }
+
+.step-n {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.step-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.28rem;
+}
+
+.step-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── Section divider ─────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 3.5rem 0;
+  max-width: 640px;
+}
+
+/* ── Focus & a11y ────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .shell { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .nav-group-label { display: none; }
+
+  .nav-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+  }
+
+  .sidebar-updated { display: none; }
+
+  .content { padding: 1.75rem 1.25rem 4rem; }
+
+  .card-row { grid-template-columns: 1fr; }
+
+  .setting-row { grid-template-columns: 1fr; gap: 0.25rem; }
+  .s-key { color: var(--cyan); }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+
+<div class="shell">
+
+  <!-- Sidebar nav -->
+  <nav class="sidebar" aria-label="Guide navigation">
+    <div class="sidebar-brand">
+      <span class="app-name">CrowdControl</span>
+      <span class="doc-label">User Guide</span>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Overview</p>
+      <a href="#about">What is CrowdControl?</a>
+      <a href="#community">Community Stations</a>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Using the App</p>
+      <a href="#listeners">For Listeners</a>
+      <a href="#owners">For Station Owners</a>
+    </div>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Get Started</p>
+      <a href="#quickstart">Quick Start</a>
+    </div>
+
+    <p class="sidebar-updated">Last updated<br>August 2026 · v2</p>
+  </nav>
+
+  <!-- Main content -->
+  <main class="content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-flag">User Guide</div>
+      <h1>Radio made by<br>the <span class="accent">crowd</span></h1>
+      <p class="sub">CrowdControl turns everyone in the same place into a shared DJ. Your GPS determines your stations. Your playlists feed the trackpool. No algorithm, no curator — just the actual taste of your local crowd.</p>
+    </div>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <p class="eyebrow">Overview</p>
+      <h2>What is CrowdControl?</h2>
+      <p>CrowdControl is a location-based collaborative radio platform for iOS, Android, web, Apple TV, Android TV, and visionOS. Open it, and you're automatically placed in up to five community radio stations based on where you are.</p>
+      <p>The trackpool for each station is drawn live from the Spotify libraries of everyone tuned in. The next track is picked on demand by selecting a random listener, then a random song from their active playlist. There's no stored queue and no recommendation engine — the music is whoever's there.</p>
+      <p>Premium members can create <strong>private stations</strong>: fixed-location venues, mobile DJ sets, invite-only sessions. Private stations come with full control over filters, DJ Mode, track pool weights, and listener permissions.</p>
+    </section>
+
+    <!-- Community Stations -->
+    <section class="section" id="community">
+      <p class="eyebrow">Geo stations</p>
+      <h2>Community Stations</h2>
+      <p>Five station levels are created automatically from your GPS position. You're a member of all of them at once — tune into any level at any time.</p>
+
+      <div class="hierarchy">
+        <div class="level-row" style="--lc: var(--c-world)">
+          <div class="level-pip"></div>
+          <span class="level-name">World</span>
+          <span class="level-desc">Every CrowdControl listener on Earth</span>
+        </div>
+        <div class="level-row" style="--lc: var(--c-country)">
+          <div class="level-pip"></div>
+          <span class="level-name">Country</span>
+          <span class="level-desc">Everyone in your country</span>
+        </div>
+        <div class="level-row" style="--lc: var(--c-state)">
+          <div class="level-pip"></div>
+          <span class="level-name">State / Region</span>
+          <span class="level-desc">Your state or regional area</span>
+        </div>
+        <div class="level-row" style="--lc: var(--c-city)">
+          <div class="level-pip"></div>
+          <span class="level-name">City</span>
+          <span class="level-desc">Your metro area</span>
+        </div>
+        <div class="level-row" style="--lc: var(--c-zip)">
+          <div class="level-pip"></div>
+          <span class="level-name">ZIP Code</span>
+          <span class="level-desc">Your immediate neighborhood</span>
+        </div>
+      </div>
+
+      <p>Station membership updates automatically as you move. On Apple TV, Android TV, and visionOS — where GPS hardware isn't available — a city picker lets you set your location manually.</p>
+
+      <div class="callout">
+        <strong>No listeners, no tracks.</strong> The trackpool is the live Spotify libraries of whoever is tuned in. An empty station has nothing to play — join it, and your music immediately enters the rotation.
+      </div>
+    </section>
+
+    <!-- For Listeners -->
+    <section class="section" id="listeners">
+      <p class="eyebrow">Listener features</p>
+      <h2>For Listeners</h2>
+      <p>Tap any station on the home screen to open its detail view. Tap <strong>Tune In</strong> — Spotify starts playing the current track at the exact position the rest of the crowd is at. You're in sync from the moment you join.</p>
+
+      <h3 class="sub">Track Reactions</h3>
+
+      <div class="card-row">
+        <div class="rcard">
+          <span class="rcard-icon">♥</span>
+          <p class="rcard-title">Like</p>
+          <p class="rcard-body">Saves the track to your <em>App Favorites</em> playlist — separate from your Spotify Liked Songs, and editable from the Playlists tab.</p>
+        </div>
+        <div class="rcard">
+          <span class="rcard-icon">✕</span>
+          <p class="rcard-title">Dislike</p>
+          <p class="rcard-body">Signals the track isn't for you. Contributes to the station's dislike count, which can trigger auto-moderation on private stations.</p>
+        </div>
+        <div class="rcard">
+          <span class="rcard-icon">⏭</span>
+          <p class="rcard-title">Skip Request</p>
+          <p class="rcard-body">Vote to move on. The button shows your running vote count and the threshold — e.g. <em>Skip (1/2)</em>. When the threshold is reached, the track advances automatically. Uses one skip credit.</p>
+        </div>
+      </div>
+
+      <h3 class="sub">Fast Pass <span class="badge-premium">Premium</span></h3>
+      <p>Browse the station's track pool and queue a specific song to play next. Your request is stored server-side — the next time the station advances, your track plays first before the random algorithm runs. One Fast Pass credit per slot; one request per listener at a time.</p>
+
+      <h3 class="sub">Now Playing Details</h3>
+      <p>The detail view shows the current track's audio fingerprint: BPM, musical key and mode, energy, mood (valence), danceability, acousticness, liveness, speechiness, and Spotify popularity. Tap the fingerprint header to expand or collapse the panel — your preference is remembered as you browse other tracks and navigate back.</p>
+
+      <h3 class="sub">Play History</h3>
+      <p>The History tab shows every track played in the last seven days. Tracks that were voted off before finishing display a <strong>skipped</strong> badge so you can see when the crowd exercised their skip votes. The history automatically refreshes each time a new track starts.</p>
+
+      <h3 class="sub">No-Repeat Window</h3>
+      <p>The same song won't play twice within six hours on any station — even as the listener pool changes throughout the day. If the pool runs low enough that no fresh tracks remain, the filter is relaxed and the full pool is used.</p>
+
+      <h3 class="sub">Tuning Out</h3>
+      <p>Tap the active headset icon in the station header to tune out. This stops CrowdControl from tracking the station's now-playing and resets your skip vote count — Spotify continues playing whatever's already in your queue.</p>
+    </section>
+
+    <!-- For Station Owners -->
+    <section class="section" id="owners">
+      <p class="eyebrow">Private stations <span class="badge-premium">Premium</span></p>
+      <h2>For Station Owners</h2>
+      <p>Create a private station from the <strong>My Radio</strong> tab. Only one of your stations can be live at a time. Hit <strong>Go Live</strong> to activate it — nearby listeners can discover it, or you can keep it invite-only with a password.</p>
+
+      <h3 class="sub">Station Setup</h3>
+      <div class="setting-block">
+        <div class="setting-row">
+          <span class="s-key">Name &amp; Icon</span>
+          <span class="s-val">Custom display name and icon URL shown in station lists and on the detail card.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Location Mode</span>
+          <span class="s-val"><strong>Static</strong> — pinned to a fixed address (venue, home studio). <strong>Dynamic</strong> — follows your current GPS position in real time, useful for street performances, beach sessions, and mobile DJ sets.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Visibility &amp; Radius</span>
+          <span class="s-val">Public stations are discoverable by listeners within your set radius. Private stations require a password. The radius (in metres) determines how far a listener must be to join.</span>
+        </div>
+      </div>
+
+      <h3 class="sub">Sound Filters</h3>
+      <p>Filters run on every candidate track before it's eligible to play. All active conditions must pass. The advanced query builder lets you combine rules with and/or logic across any audio feature.</p>
+      <div class="setting-block">
+        <div class="setting-row">
+          <span class="s-key">Genre</span>
+          <span class="s-val">Whitelist specific genres. Tracks without a matching genre tag are excluded entirely.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">BPM Range</span>
+          <span class="s-val">Min/max BPM window. Tracks outside the range don't enter the pool.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Release Year</span>
+          <span class="s-val">Minimum release year — useful for era-specific or decade stations.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Explicit Content</span>
+          <span class="s-val">Allow or block tracks flagged explicit on Spotify.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Advanced Query</span>
+          <span class="s-val">And/or rule trees across any audio feature: BPM, energy, valence, danceability, acousticness, instrumentalness, liveness, speechiness, popularity, key, mode, time signature, duration, release year, explicit.</span>
+        </div>
+      </div>
+
+      <h3 class="sub">DJ Mode</h3>
+      <p>When enabled, the next track is scored against the current one for harmonic continuity. Candidates are ranked and the winner is drawn from the top-scoring quartile — controlled randomness, not pure chance.</p>
+      <div class="setting-block">
+        <div class="setting-row">
+          <span class="s-key">BPM Tolerance</span>
+          <span class="s-val">
+            Maximum BPM difference allowed from the current track. Lower = tighter energy continuity.
+            <div class="chips">
+              <span class="chip">Exact</span>
+              <span class="chip">±1</span>
+              <span class="chip">±3</span>
+              <span class="chip">±5</span>
+              <span class="chip">±10</span>
+              <span class="chip">±15</span>
+              <span class="chip">±20</span>
+              <span class="chip">Any</span>
+            </div>
+          </span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Key Compatibility</span>
+          <span class="s-val">
+            <div class="chips">
+              <span class="chip">Any</span>
+              <span class="chip">Same key</span>
+              <span class="chip">Camelot wheel</span>
+            </div>
+            <em>Camelot wheel</em> matches harmonically adjacent keys — the method DJs use for transitions that never clash.
+          </span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Genre Strictness</span>
+          <span class="s-val">
+            <div class="chips">
+              <span class="chip">Any</span>
+              <span class="chip">Related</span>
+              <span class="chip">Exact</span>
+            </div>
+            <em>Related</em> requires at least one shared genre tag. <em>Exact</em> requires a majority of the current track's genres to match.
+          </span>
+        </div>
+      </div>
+
+      <h3 class="sub">Track Pool Weights</h3>
+      <p>Control whose music gets prioritised. The two weights must sum to 100% or less — the remainder goes to fully random listener selection.</p>
+      <div class="setting-block">
+        <div class="setting-row">
+          <span class="s-key">Owner Music %</span>
+          <span class="s-val">Probability the next track is drawn from the owner's own library. Set to 100% for a fully personal station; 0% to stay random.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Recent Listener %</span>
+          <span class="s-val">Probability of drawing from one of the most recently joined N listeners. Gives new arrivals immediate representation in the mix.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Default Playlist</span>
+          <span class="s-val">Which of your playlists to use when the owner-music path fires. Defaults to all active playlists if unset.</span>
+        </div>
+      </div>
+
+      <h3 class="sub">Auto-Mod &amp; Access</h3>
+      <div class="setting-block">
+        <div class="setting-row">
+          <span class="s-key">Skip Threshold</span>
+          <span class="s-val">Number of skip-request votes needed to advance the track. Smaller values give listeners more collective control.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Disable Skip Voting</span>
+          <span class="s-val">Hides the Skip button for all listeners. The owner is the sole decision-maker on track changes.</span>
+        </div>
+        <div class="setting-row">
+          <span class="s-key">Disable Fast Pass</span>
+          <span class="s-val">Prevents listeners from queuing specific tracks. Keeps the mix fully algorithmic — only the filters, weights, and DJ Mode decide what plays.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section class="section" id="quickstart">
+      <p class="eyebrow">New here?</p>
+      <h2>Quick Start</h2>
+      <p>From zero to listening in under two minutes.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <p class="step-title">Open the app and allow location</p>
+            <p class="step-desc">CrowdControl places you in up to five community stations instantly — world, country, state, city, and ZIP code. No account needed to browse. On TV or visionOS, use the city picker instead of GPS.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <p class="step-title">Sign in with Spotify</p>
+            <p class="step-desc">Tap the Profile tab and connect your account. Your playlists immediately become part of the trackpool for every community station you're a member of. You contribute; the crowd contributes back.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <p class="step-title">Tap a station, then Tune In</p>
+            <p class="step-desc">Open any station from the home screen. Tap <strong>Tune In</strong> — Spotify starts playing the current track at the exact position everyone else is at.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div>
+            <p class="step-title">React to what's playing</p>
+            <p class="step-desc">Heart it to save to your App Favorites. Thumbs down if it's not your style. Request a skip — if enough of the crowd agrees, the station advances automatically.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">5</div>
+          <div>
+            <p class="step-title">Activate your playlists</p>
+            <p class="step-desc">Go to the Playlists tab. Create a playlist or sync one from Spotify. Toggle it active — your tracks enter the rotation for every station you're in.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">6</div>
+          <div>
+            <p class="step-title">Create a private station <span class="badge-premium">Premium</span></p>
+            <p class="step-desc">Open <strong>My Radio</strong> and tap +. Name your station, set its location mode (static venue or dynamic GPS), configure filters and DJ Mode, then tap <strong>Go Live</strong>. Share the link, or let nearby listeners discover it on their own.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function () {
+  // Scroll-spy: highlight the active section in the sidebar nav
+  const links = Array.from(document.querySelectorAll('.nav-group a'));
+  const ids = links.map(a => a.getAttribute('href').replace('#', ''));
+
+  if (!('IntersectionObserver' in window)) {
+    if (links.length) links[0].classList.add('active');
+    return;
+  }
+
+  let current = ids[0];
+
+  const obs = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          current = entry.target.id;
+          links.forEach(a => {
+            a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+          });
+        }
+      });
+    },
+    { rootMargin: '-15% 0px -75% 0px' }
+  );
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+
+  // Set initial active
+  if (links.length) links[0].classList.add('active');
+}());
+</script>
