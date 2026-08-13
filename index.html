@@ -644,6 +644,32 @@ nav {
   gap: 0.875rem;
 }
 
+.btn-coming-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  opacity: 0.45;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+.coming-soon-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text2);
+  opacity: 0.6;
+  margin-left: 0.25rem;
+}
+
 /* ── Footer ──────────────────────────────────────────────────────── */
 footer {
   position: relative;
@@ -720,8 +746,8 @@ footer {
     <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#features">Features</a></li>
     <li><a href="#private-stations">For DJs</a></li>
-    <li><a href="privacy.html">Privacy</a></li>
-    <li><a href="guide.html">Guide</a></li>
+    <li><a href="https://crowdcontrol.online/privacy">Privacy</a></li>
+    <li><a href="https://claude.ai/code/artifact/a0cf0e7b-820f-4462-bb74-bd50107624fa">Guide</a></li>
     <li><a href="#download" class="nav-cta">Get the app</a></li>
   </ul>
 </nav>
@@ -738,13 +764,13 @@ footer {
     No algorithm. No curator. Just the actual taste of your local crowd.
   </p>
   <div class="hero-ctas">
-    <a class="btn-primary" href="#download">
+    <a class="btn-primary" href="https://app.crowdcontrol.online">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M3 10l5 4 5-4M8 2v12" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M8 1a7 7 0 100 14A7 7 0 008 1zM2.5 8a5.5 5.5 0 1111 0 5.5 5.5 0 01-11 0z" fill="currentColor" opacity=".3"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/>
       </svg>
-      Download free
+      Open Web App
     </a>
-    <a class="btn-secondary" href="guide.html">Read the guide →</a>
+    <a class="btn-secondary" href="https://crowdcontrol.online/guide">Read the guide →</a>
   </div>
 
   <!-- Decorative now-playing card -->
@@ -859,7 +885,7 @@ footer {
         <p class="fcard-body">Queue a specific track from the station's pool to play next. One slot per listener, played before the random algorithm runs.</p>
       </div>
       <div class="fcard" style="--fc:#b87aff;--fc-dim:rgba(184,122,255,0.08);--fc-line:rgba(184,122,255,0.18)">
-        <div class="fcard-icon">♥</div>
+        <div class="fcard-icon" style="color:#ff42e0">♥</div>
         <div class="fcard-title">App Favorites</div>
         <p class="fcard-body">Heart a track to save it to your App Favorites playlist — separate from Spotify Liked Songs and fully editable.</p>
       </div>
@@ -904,21 +930,28 @@ footer {
   <!-- Download -->
   <section class="download" id="download">
     <h2>The crowd is<br>already <em>listening.</em></h2>
-    <p>Free on iOS, Android, and the web. Premium unlocks private stations, Fast Pass, and multi-playlist control.</p>
+    <p>Free on the web right now. iOS and Android apps coming soon. Premium unlocks private stations, Fast Pass, and multi-playlist control.</p>
     <div class="download-ctas">
-      <a class="btn-primary" href="#">
+      <a class="btn-primary" href="https://app.crowdcontrol.online">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <rect x="1" y="1" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Open Web App
+      </a>
+      <span class="btn-coming-soon">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
           <path d="M11.182 9.79c-.22.424-.44.815-.672 1.176-.35.535-.637.905-.859 1.11-.343.315-.71.476-1.105.485-.282 0-.623-.08-1.02-.243-.398-.162-.764-.243-1.101-.243-.352 0-.728.081-1.13.243-.403.163-.727.247-.974.253-.377.01-.752-.155-1.124-.494-.24-.222-.537-.606-.888-1.152C1.71 9.9 1.2 8.696 1.02 7.458c-.182-1.286.05-2.336.694-3.147.47-.595 1.05-.916 1.741-.923.28 0 .649.086 1.11.256.46.17.756.256.886.256.098 0 .428-.1.988-.3.53-.185.977-.262 1.343-.232.994.08 1.74.472 2.237 1.179-.888.539-1.328 1.293-1.32 2.26.007.754.282 1.382.822 1.883.245.232.518.412.822.54-.066.19-.135.372-.21.549zM9 1.082C9 1.72 8.76 2.316 8.28 2.87c-.577.671-1.274 1.058-2.031 1.001-.01-.078-.014-.16-.014-.245 0-.615.267-1.272.742-1.81.237-.27.539-.495.906-.675C8.248 1.961 8.605 1.853 9 1.846c.003.08.003.157 0 .236z"/>
         </svg>
-        App Store
-      </a>
-      <a class="btn-primary" href="#" style="background:var(--lime);color:#0c0c24">
+        App Store <span class="coming-soon-label">Coming soon</span>
+      </span>
+      <span class="btn-coming-soon">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
           <path d="M1.578 1L8 8.5 1.578 16h1.16l5.868-6.73L13.99 16H16L9.238 8.5 16 1h-1.16l-5.447 6.24L4.055 1H1.578z"/>
         </svg>
-        Google Play
-      </a>
-      <a class="btn-secondary" href="guide.html">Read the guide</a>
+        Google Play <span class="coming-soon-label">Coming soon</span>
+      </span>
+      <a class="btn-secondary" href="https://crowdcontrol.online/guide">Read the guide</a>
     </div>
   </section>
 </div>
@@ -927,8 +960,8 @@ footer {
 <footer>
   <div class="footer-logo"><span>Crowd</span>Control</div>
   <ul class="footer-links">
-    <li><a href="guide.html">User Guide</a></li>
-    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="https://claude.ai/code/artifact/a0cf0e7b-820f-4462-bb74-bd50107624fa">User Guide</a></li>
+    <li><a href="https://crowdcontrol.online/privacy">Privacy Policy</a></li>
     <li><a href="#how-it-works">How it works</a></li>
     <li><a href="#private-stations">For DJs</a></li>
   </ul>
